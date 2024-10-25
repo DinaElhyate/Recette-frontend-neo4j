@@ -1,16 +1,19 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 export default function RecetteForm() {
+    const navigate = useNavigate();
     const [recipes, setRecipes] = useState([
         {
             titre: "Spaghetti Bolognese",
             description: "Recette classique de spaghetti avec une sauce bolognese.",
-            image: "https://via.placeholder.com/100",
+            image: "img/WhatsApp Image 2024-10-22 at 15.21.44.jpeg",
         },
         {
             titre: "Salade César",
             description: "Salade avec des croûtons, du parmesan et de la sauce César.",
-            image: "https://via.placeholder.com/100",
+            image: "img/th.jpeg",
         },
     ]);
 
@@ -34,28 +37,49 @@ export default function RecetteForm() {
         }
     };
 
-    const deleteRecipe = (index) => {
-        const updatedRecipes = [...recipes];
-        updatedRecipes.splice(index, 1);
-        setRecipes(updatedRecipes);
+    const deleteRecipe = async (index) => {
+        const userId = "user123"; // Identifiant statique de l'utilisateur
+        const recipeId = "8ed3e3da-f1fd-4809-838d-e74e73e55ae7"; // Identifiant statique de la recette
+    
+        try {
+            // Appel à l'API pour supprimer la recette
+            const response = await axios.delete(`/api/recipes/${userId}/${recipeId}`);
+    
+            console.log('Recette supprimée avec succès :', response.data);
+    
+            // Mettez à jour l'état si la suppression est réussie
+            const updatedRecipes = [...recipes];
+            updatedRecipes.splice(index, 1);
+            setRecipes(updatedRecipes);
+        } catch (error) {
+            console.error('Erreur lors de la suppression de la recette :', error);
+            if (error.response) {
+                console.error('Détails de la réponse d\'erreur :', error.response.data);
+                console.error('Statut de la réponse :', error.response.status);
+            } else {
+                console.error("Erreur réseau : ", error);
+            }
+        }
     };
+    
+    
 
     const editRecipe = (index) => {
-        setNewRecipe(recipes[index]);
         setEditingIndex(index);
-        setShowForm(true);
+        navigate('/edit-recipe', { state: { recipe: recipes[index] } });
     };
+    
 
     const toggleForm = () => {
         setShowForm(!showForm);
-        setNewRecipe({ titre: "", description: "", image: "" });
-        setEditingIndex(null);
+        navigate('/create-recipe'); 
     };
 
     const styles = {
         container: {
             padding: '20px',
             fontFamily: 'Arial, sans-serif',
+            marginBottom:'300px',
         },
         buttonRightContainer: {
             display: 'flex',

@@ -4,33 +4,49 @@ import axios from 'axios';
 
 export default function Auth() {
   const navigate = useNavigate();
+  const [emailOrPhoneFocused, setEmailOrPhoneFocused] = useState(false);
+  const [usernameFocused, setUsernameFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
+
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    const userData = { email, password }; // Connexion
-
+  
+    const userData = {
+      username,
+      email,
+      password
+    };
+  
+    console.log('Données envoyées :', userData);
+  
     try {
-      const url = isLogin ? 'http://localhost:8085/api/users/login' : 'http://localhost:8085/api/users';
-      const response = await axios.post(url, userData);
+      const response = isLogin
+        ? await axios.post('http://localhost:8085/api/users/login', { email, password })
+        : await axios.post('http://localhost:8085/api/users', userData);
       
-      console.log('Réponse de l\'API :', response.data);
-      navigate('/'); // Rediriger vers la page d'accueil après une connexion réussie
-
-    } catch (error) {
-      console.error('Erreur lors de la connexion :', error);
-      if (error.response && error.response.status === 401) {
-        setErrorMessage('Mot de passe ou email incorrect');
+      console.log('Utilisateur créé avec succès :', response.data);
+  
+      // Rediriger vers la page d'accueil après une inscription réussie
+      if (!isLogin) {
+        navigate('/home'); 
+        // Redirigez vers / après une inscription réussie
       } else {
-        setErrorMessage('Une erreur s\'est produite. Veuillez réessayer.');
+        navigate('/home'); // Redirigez vers /recipes après une connexion réussie
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création de l’utilisateur :', error);
+      if (error.response) {
+        console.error('Détails de la réponse d\'erreur :', error.response.data);
+        console.error('Statut de la réponse :', error.response.status);
       }
     }
   };
-
+  
   return (
     <div className="auth-page">
       <div className="auth-container">
@@ -38,27 +54,84 @@ export default function Auth() {
           <Link to="/" className="logo">F<span>oo</span>diesHub</Link>
           <h2>{isLogin ? 'Se connecter' : 'Inscription'}</h2>
           <form onSubmit={handleSubmit}>
-            {isLogin && (
+            {isLogin ? (
               <>
                 <div className="input-group">
                   <input
                     type="text"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    id="email-or-phone"
+                    placeholder=" "
+                    onFocus={() => setEmailOrPhoneFocused(true)}
+                    onBlur={() => setEmailOrPhoneFocused(false)}
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
                   />
+                  <label htmlFor="email-or-phone" className={emailOrPhoneFocused ? 'focused' : ''}>
+                    Email ou téléphone
+                  </label>
                 </div>
                 <div className="input-group">
                   <input
                     type="password"
-                    placeholder="Mot de passe"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
+                    id="password"
+                    placeholder=" "
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
                   />
+                  <label htmlFor="password" className={passwordFocused ? 'focused' : ''}>
+                    Mot de passe
+                  </label>
                 </div>
-                {errorMessage && <div className="error-message">{errorMessage}</div>}
+                <div className="forgot-password">
+                  <a href="/forgot-password">Mot de passe oublié ?</a>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="input-group">
+                  <input
+                    type="text"
+                    id="new-username"
+                    placeholder=" "
+                    onFocus={() => setUsernameFocused(true)}
+                    onBlur={() => setUsernameFocused(false)}
+                    value={username} 
+                    onChange={(e) => setUsername(e.target.value)} 
+                  />
+                  <label htmlFor="new-username" className={usernameFocused ? 'focused' : ''}>
+                    Nom d'utilisateur
+                  </label>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="email"
+                    id="new-email"
+                    placeholder=" "
+                    onFocus={() => setEmailOrPhoneFocused(true)}
+                    onBlur={() => setEmailOrPhoneFocused(false)}
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                  />
+                  <label htmlFor="new-email" className={emailOrPhoneFocused ? 'focused' : ''}>
+                    Email
+                  </label>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="password"
+                    id="new-password"
+                    placeholder=" "
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                  />
+                  <label htmlFor="new-password" className={passwordFocused ? 'focused' : ''}>
+                    Mot de passe
+                  </label>
+                </div>
               </>
             )}
             <button type="submit" className="btn">
@@ -68,14 +141,25 @@ export default function Auth() {
           <div className="signup">
             <p>
               {isLogin ? (
-                <span>Vous n'avez pas de compte ? <a href="#" onClick={() => setIsLogin(false)}>Inscrivez-vous</a></span>
+                <>
+                  Vous n'avez pas de compte ? <a href="#" onClick={() => setIsLogin(false)}>Inscrivez-vous</a>
+                </>
               ) : (
-                <span>Vous avez déjà un compte ? <a href="#" onClick={() => setIsLogin(true)}>Se connecter</a></span>
+                <>
+                  Vous avez déjà un compte ? <a href="#" onClick={() => setIsLogin(true)}>Se connecter</a>
+                </>
               )}
             </p>
           </div>
         </div>
+        <div className="description">
+          <h3>Nous sommes plus qu'une simple entreprise</h3>
+          <p>
+          Bienvenue sur notre site de recettes ! Ici, nous partageons notre passion pour la cuisine et l'art de préparer des plats savoureux et créatifs. Que vous soyez un cuisinier débutant ou un chef expérimenté, vous trouverez des recettes faciles à suivre, accompagnées de conseils pratiques et d'astuces pour réussir chaque plat. Explorez nos catégories variées, des entrées délicieuses aux desserts irrésistibles, et laissez-vous inspirer par nos idées culinaires pour chaque occasion. Bon appétit !
+          </p>
+        </div>
       </div>
+      
       <style jsx>{`
         .auth-page {
           display: flex;
@@ -143,47 +227,46 @@ export default function Auth() {
           border-color: var(--primary-color);
           outline: none;
         }
-        .input-group input:focus + label, .input-group input:not(:placeholder-shown) + label {
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
           top: -10px;
           left: 10px;
           font-size: 0.8em;
           color: var(--primary-color);
         }
-        .error-message {
-          color: red; 
-          font-size: 0.9em; 
-          margin-top: 5px; 
-        }
         .forgot-password {
+          text-align: right;
           margin-top: 10px;
-          text-align: right; 
+        }
+        .signup {
+          text-align: center;
+          margin-top: 20px;
+        }
+        .description {
+          text-align: center;
+          padding-left: 40px;
+          background-color: var(--primary-color);
+          color:white;
+        }
+        .description h3 {
+          margin-top: 100px;
+        }
+        .description p {
+          font-size: 0.9em;
+          margin-top: 50px;
+          color:white;
         }
         .btn {
           width: 100%;
           padding: 10px;
           background-color: var(--primary-color);
+          color: white;
           border: none;
           border-radius: 5px;
-          color: white;
-          font-size: 1em;
           cursor: pointer;
         }
         .btn:hover {
-          background-color: darken(var(--primary-color), 10%);
-        }
-        .signup {
-          margin-top: 20px;
-          text-align: center; 
-        }
-        .signup a {
-          color: var(--primary-color);
-        }
-        .description h3 {
-          margin-bottom: 20px;
-          font-size: 1.5em;
-        }
-        .description p {
-          line-height: 1.5;
+          background-color: #5c9de8;
         }
       `}</style>
     </div>

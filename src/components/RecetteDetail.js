@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import RecipeCard from "../components/RecipeCard";
+
 export default function RecetteDetail() {
-    const recipeData = {
-        titre: "Recette de test",
+    const [recipeData, setRecipeData] = useState({
+        titre: "Spaghetti Carbonara ",
         description: "Ceci est une description de test.",
         dureePreparation: "10 minutes",
         dureeCuisson: "30 minutes",
@@ -34,42 +35,29 @@ export default function RecetteDetail() {
         ],
         comments: ["Délicieux!", "À refaire."],
         authorId: "12345",
-        image: "/img/top-chiefs/img_1.jpg" 
-    };
-    const recipes = [
-    
-        {
-            title: "Spaghetti and Meatballs",
-            image: "/img/gallery/img_4.jpg",
-            authorImg: "/img/top-chiefs/img_2.jpg",
-        },
-        {
-            title: "American Cheese Burger",
-            image: "/img/gallery/img_5.jpg",
-            authorImg: "/img/top-chiefs/img_3.jpg",
-        },
-        {
-            title: "Mutton Biriyani",
-            image: "/img/gallery/img_6.jpg",
-            authorImg: "/img/top-chiefs/img_5.jpg",
-        },
-        {
-            title: "Japanese Sushi",
-            image: "/img/gallery/img_10.jpg",
-            authorImg: "/img/top-chiefs/img_6.jpg",
-        },
-        {
-            title: "American Cheese Burger",
-            image: "/img/gallery/img_5.jpg",
-            authorImg: "/img/top-chiefs/img_3.jpg",
-        },
-        {
-            title: "Mutton Biriyani",
-            image: "/img/gallery/img_6.jpg",
-            authorImg: "/img/top-chiefs/img_5.jpg",
-        }
-    ].sort(() => Math.random() - 0.5)
+        image: "/img/WhatsApp Image 2024-10-22 at 15.21.44.jpeg" 
+    });
 
+    const [recipes, setRecipes] = useState([
+        {
+            recipeId: "recipe1",
+            title: "Spaghetti Carbonara",
+            description: "A classic Italian pasta dish.",
+            ingredients: ["Spaghetti", "Eggs", "Pancetta", "Parmesan cheese", "Black pepper"],
+            instructions: ["Boil the spaghetti.", "Fry the pancetta.", "Mix eggs and cheese.", "Combine everything."],
+            image: "WhatsApp Image 2024-10-22 at 15.21.44.jpeg"
+        },
+        {
+            recipeId: "recipe2",
+            title: "American Cheese Burger",
+            description: "A delicious cheese burger.",
+            ingredients: ["Buns", "Beef", "Cheese", "Lettuce", "Tomato"],
+            instructions: ["Grill the beef.", "Assemble the burger with cheese and veggies."],
+            image: "chef-de-cuisine.jpg"
+        }
+    ].sort(() => Math.random() - 0.5));
+
+    
     
 
     const [comments, setComments] = useState(recipeData.comments);
@@ -297,16 +285,7 @@ export default function RecetteDetail() {
 
             <button  style={styles.submitButton} onClick={addComment}>Laisser un commentaire</button>
 
-            {/* Affichage des commentaires */}
-            <h2 style={styles.sectionTitle}>Commentaires</h2>
-            <ul style={styles.list}>
-                {comments.map((comment, index) => (
-                    <li key={index} style={styles.commentItem}>
-                        <strong>{comment.name}:</strong> {comment.text}
-                    </li>
-                ))}
-            </ul>
-            <div>
+            
                 <h2 style={{ marginTop: '20px' }}>Vous pourrez aussi aimer</h2>
                 <div className='recipes-container'>
                 {recipes.slice(0, 3).map((recipe, index) => (
@@ -315,6 +294,6 @@ export default function RecetteDetail() {
                 </div>
             </div>
 
-        </div>
+       
     );
 }

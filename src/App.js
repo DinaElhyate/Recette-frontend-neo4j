@@ -1,7 +1,8 @@
 import {
   BrowserRouter as Router,
   Routes,
-  Route
+  Route,
+  Navigate // Importez Navigate
 } from "react-router-dom"
 
 import Navbar from "./components/Navbar"
@@ -13,6 +14,8 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import RecetteDetail from "./components/RecetteDetail";
 import RecetteForm from "./components/RecetteForm";
+import createRecipe from "./components/CreateRecipe";
+import EditRecipePage from"./components/edit-recipe";
 
 function App() {
   return (
@@ -20,12 +23,15 @@ function App() {
       <Navbar />
       <div className="container main">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Navigate to="/auth" />} /> {/* Redirection vers /auth */}
+          <Route path="/auth" element={<Auth />} /> {/* Auth route */}
+          <Route path="/home" element={<Home />} /> {/* Ajoutez la route vers Home */}
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/settings" element={<Settings />} />
-          <Route  path="/auth" element={<Auth/>}/>
-          <Route path="/RecetteDetail" element={<RecetteDetail/>}/>
-          <Route path="/RecetteForm" element={<RecetteForm/>}/>
+          <Route path="/RecetteDetail" element={<RecetteDetail />} />
+          <Route path="/RecetteForm" element={<RecetteForm />} />
+          <Route path="/create-recipe" element={<createRecipe  />} />
+          <Route path="/edit-recipe" element={<EditRecipePage />} />
         </Routes>
       </div>
       <Footer />
