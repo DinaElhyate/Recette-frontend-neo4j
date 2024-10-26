@@ -12,16 +12,10 @@ export default function RecetteForm() {
     const fetchUserRecipes = async (userId) => {
         try {
             const response = await axios.get(`http://localhost:8085/api/users/${userId}`);
-            console.log('Recettes récupérées :', response.data.recipes); 
+            console.log('Structure complète des recettes:', JSON.stringify(response.data.recipes, null, 2));
             setRecipes(response.data.recipes);
         } catch (error) {
             console.error('Erreur lors de la récupération des recettes :', error);
-            if (error.response) {
-                console.error('Détails de la réponse d\'erreur :', error.response.data);
-                console.error('Statut de la réponse :', error.response.status);
-            } else {
-                console.error("Erreur réseau : ", error);
-            }
         }
     };
 
@@ -60,35 +54,66 @@ export default function RecetteForm() {
         }
     };
 
-    const deleteRecipe = async (index) => {
-        const userId = getUserIdFromSessionStorage(); 
-        const recipeId = recipes[index].recipeId;
-
-        try {
-            const response = await axios.delete(`/api/recipes/${userId}/${recipeId}`);
-            console.log('Recette supprimée avec succès :', response.data);
-            const updatedRecipes = [...recipes];
-            updatedRecipes.splice(index, 1);
-            setRecipes(updatedRecipes);
-        } catch (error) {
-            console.error('Erreur lors de la suppression de la recette :', error);
-            if (error.response) {
-                console.error('Détails de la réponse d\'erreur :', error.response.data);
-                console.error('Statut de la réponse :', error.response.status);
-            } else {
-                console.error("Erreur réseau : ", error);
-            }
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [recipeToDelete, setRecipeToDelete] = useState(null);
+    
+    const deleteRecipe = async (recipe) => {
+        console.log('Recipe to delete:', recipe);
+        if (!recipe) {
+            console.error('Recette non définie');
+            return;
         }
+        setRecipeToDelete(recipe);
+        setShowDeleteConfirmation(true);
+    };
+    
+    const confirmDelete = async () => {
+        const userId = getUserIdFromSessionStorage();
+        
+        if (!userId || !recipeToDelete) {
+            console.error('Données manquantes:', { userId, recipeToDelete });
+            return;
+        }
+    
+        try {
+            console.log('Tentative de suppression de la recette:', recipeToDelete);
+            
+            // Utilisons l'ID utilisateur et recipeId dans l'URL
+            const response = await axios.delete(
+                `http://localhost:8085/api/recipes/${userId}/${recipeToDelete.recipeId}`
+                
+            );
+            
+            if (response.data.success) {
+                // Mettre à jour la liste des recettes localement
+                const updatedRecipes = recipes.filter(r => r.recipeId !== recipeToDelete.recipeId);
+                setRecipes(updatedRecipes);
+            }
+            
+            setShowDeleteConfirmation(false);
+            setRecipeToDelete(null);
+        } catch (error) {
+            console.error('Erreur lors de la suppression:', error);
+            setShowDeleteConfirmation(false);
+            setRecipeToDelete(null);
+
+        }
+        navigate('/home'); 
+    };
+    
+    const cancelDelete = () => {
+        setShowDeleteConfirmation(false);
+        setRecipeToDelete(null);
+
     };
 
-    const editRecipe = (index) => {
-        setEditingIndex(index);
-        navigate('/edit-recipe', { state: { recipe: recipes[index] } });
+    const editRecipe = (recipe) => { // Changez le paramètre de index à recipe
+        navigate('/EditRecipe', { state: { recipe: recipe } }); // Passez directement l'objet recipe
     };
 
     const toggleForm = () => {
         setShowForm(!showForm);
-        navigate('/create-recipe'); 
+        navigate('/CreateRecipe'); 
     };
 
     const styles = {
@@ -185,34 +210,45 @@ export default function RecetteForm() {
                     </button>
                 </div>
             )}
+            {showDeleteConfirmation && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '5px' }}>
+                        <h3>Êtes-vous sûr de vouloir supprimer cette recette ?</h3>
+                        <div style={styles.buttonContainer}>
+                            <button style={{ ...styles.button, backgroundColor: 'red' }} onClick={confirmDelete}>Oui, supprimer</button>
+                            <button style={styles.button} onClick={cancelDelete}>Annuler</button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <h2 style={styles.title}>Vos Recettes</h2>
             <ul>
-                {recipes.map((recipe, index) => (
-                    <li key={index} style={styles.recipeItem}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <img src={recipe.image} alt={recipe.titre} style={styles.image} />
-                            <div>
-                                <h3>{recipe.titre}</h3>
-                                <p>{recipe.description}</p>
-                            </div>
-                        </div>
-                        <div style={styles.buttonContainer}>
-                            <button
-                                style={{ ...styles.button, ...styles.deleteButton }}
-                                onClick={() => deleteRecipe(index)}
-                            >
-                                Supprimer
-                            </button>
-                            <button
-                                style={{ ...styles.button, ...styles.editButton }}
-                                onClick={() => editRecipe(index)}
-                            >
-                                Éditer
-                            </button>
-                        </div>
-                    </li>
-                ))}
+            {recipes.map((recipe) => (
+    <li key={recipe.recipeId || Math.random()} style={styles.recipeItem}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={recipe.image} alt={recipe.titre} style={styles.image} />
+            <div>
+                <h3>{recipe.titre}</h3>
+                <p>{recipe.description}</p>
+            </div>
+        </div>
+        <div style={styles.buttonContainer}>
+            <button
+                style={{ ...styles.button, ...styles.deleteButton }}
+                onClick={() => deleteRecipe(recipe)}
+            >
+                Supprimer
+            </button>
+            <button
+                style={{ ...styles.button, ...styles.editButton }}
+                onClick={() => editRecipe(recipe)}
+            >
+                Éditer
+            </button>
+        </div>
+    </li>
+))}
             </ul>
         </div>
     );

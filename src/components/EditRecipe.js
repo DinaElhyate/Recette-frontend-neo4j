@@ -1,70 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-export default function EditRecipePage() {
-    const { userId, recipeId } = useParams();
+export default function EditRecipe() {
+    const location = useLocation();
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
     const [recipe, setRecipe] = useState({
         title: "",
         description: "",
         image: "",
         ingredients: [""],
-        instructions: [""],
+        instructions: [""]
     });
 
     useEffect(() => {
-        const fetchRecipe = async () => {
-            try {
-                // Identifiant statique de l'utilisateur
-                const userId = "user123"; 
-                // Identifiant statique de la recette
-                const recipeId = "8ed3e3da-f1fd-4809-838d-e74e73e55ae7";
-                const response = await axios.get(`/api/recipes/${userId}/${recipeId}`);
-                setRecipe(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Error fetching recipe:', error);
-                alert('Failed to fetch recipe. Please try again.');
-                setIsLoading(false);
-            }
-        };
+        if (location.state?.recipe) {
+            setRecipe(location.state.recipe);
+        }
+    }, [location.state]);
 
-        fetchRecipe();
-    }, []);
+    const getUserIdFromSessionStorage = () => {
+        const userData = sessionStorage.getItem('authenticatedUser');
+        return userData ? JSON.parse(userData).userId : null;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const userId = "user123"; // Identifiant statique de l'utilisateur
-            const recipeId = "8ed3e3da-f1fd-4809-838d-e74e73e55ae7";
-            await axios.put(`/api/recipes/${userId}/${recipeId}`, recipe);
-            alert('Recette modifiée avec succès!');
-            navigate(`/recipes/${userId}`); 
+            const userId = getUserIdFromSessionStorage();
+            await axios.put(
+                `http://localhost:8085/api/recipes/${userId}/${recipe.recipeId}`,
+                recipe
+            );
+            navigate('/recipes');
         } catch (error) {
-            console.error('Erreur lors de la modification de la recette:', error);
-            alert('Échec de la modification de la recette. Veuillez réessayer.');
+            console.error('Erreur lors de la modification:', error);
         } finally {
             setIsLoading(false);
         }
     };
-
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setRecipe({ ...recipe, image: reader.result });
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    if (isLoading) {
-        return <div>Chargement...</div>;
-    }
 
     return (
         <div className="recipe-page">
@@ -86,12 +62,7 @@ export default function EditRecipePage() {
                         className="input-field"
                         required
                     />
-                    <input
-                        type="file"
-                        onChange={handleImageChange}
-                        className="input-field"
-                        accept="image/*"
-                    />
+               
                     {recipe.image && <img src={recipe.image} alt="Recipe" className="recipe-image" />}
                     <div className="ingredients-section">
                         <div className="ingredients-header">

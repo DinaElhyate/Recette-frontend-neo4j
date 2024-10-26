@@ -14,8 +14,9 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import RecetteDetail from "./components/RecetteDetail";
 import RecetteForm from "./components/RecetteForm";
-import createRecipe from "./components/CreateRecipe";
-import EditRecipePage from"./components/edit-recipe";
+import RecipeList from "./components/RecipeList";
+import CreateRecipe from "./components/CreateRecipe";
+import EditRecipe from"./components/EditRecipe";
 
 
 function App() {
@@ -28,11 +29,12 @@ function App() {
           <Route path="/auth" element={<Auth />} /> {/* Auth route */}
           <Route path="/home" element={<Home />} />
           <Route path="/recipes" element={<Recipes />} />
+          <Route path="/RecipeList" element={<RecipeList />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/RecetteDetail" element={<RecetteDetail />} />
           <Route path="/RecetteForm" element={<RecetteForm />} />
-         
-          <Route path="/edit-recipe" element={<EditRecipePage />} />
+          <Route path="/CreateRecipe" element={<CreateRecipe />} />
+          <Route path="/EditRecipe" element={<EditRecipe />} />
         </Routes>
       </div>
       <Footer />
