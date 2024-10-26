@@ -26,7 +26,7 @@ export default function HeroSection(){
             </div>
             <div className="col gallery">
                 { images.map((src, index) => (
-                    <CustomImage key={index} imgSrc={src} pt={"90%"} />
+                    <CustomImage key={index} imgSrc={src} lassName="custom-image" />
                 )) }
             </div>
         </div>

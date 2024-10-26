@@ -5,13 +5,13 @@ export default function RecipeCard({ recipe }) {
     const navigate = useNavigate();
 
     const goToDetailPage = () => {
-        navigate('/RecetteDetail', { state: { recipe } }); // Passer la recette à la page de détails
+        navigate('/RecetteDetail', { state: { recipe } }); 
     };
 
-    // Créer le chemin de l'image à partir du nom de l'image
-   // Créer le chemin de l'image à partir du nom de l'image
-const recipeImagePath = `${process.env.PUBLIC_URL}/img/${recipe.image}`; // Assurez-vous que l'image est dans le dossier public/img
-const userImagePath = `${process.env.PUBLIC_URL}/img/${recipe.userImage || 'default-user-image.jpg'}`; // Image utilisateur par défaut
+    const recipeImagePath = `${process.env.PUBLIC_URL}/img/${recipe.image}`; 
+    const userImagePath = `${process.env.PUBLIC_URL}/img/${recipe.userImage || 'default-user-image.jpg'}`; 
+
+    console.log('Image URL:', recipeImagePath);
 
     return (
         <div className="recipe-card" onClick={goToDetailPage}>
@@ -20,9 +20,9 @@ const userImagePath = `${process.env.PUBLIC_URL}/img/${recipe.userImage || 'defa
                     imgSrc={recipeImagePath}
                     pt="65%"
                     style={{
-                        maxWidth: '100%',   // Ne pas dépasser 100% de la largeur du conteneur
-                        maxHeight: '200px', // Limiter la hauteur à 200px ou selon vos besoins
-                        objectFit: 'cover',  // Couvrir le cadre sans déformer l'image
+                        maxWidth: '100%',  
+                        maxHeight: '200px', 
+                        objectFit: 'cover', 
                     }}
                 />
             </div>
@@ -32,22 +32,22 @@ const userImagePath = `${process.env.PUBLIC_URL}/img/${recipe.userImage || 'defa
                     src={userImagePath}
                     alt={recipe.username}
                     style={{
-                        width: '60px',         // Taille de l'image
-                        height: '60px',        // Corriger la hauteur pour correspondre à la largeur
-                        borderRadius: '50%',    // Arrondi pour un cadre circulaire
-                        objectFit: 'cover',     // Ajuste l'image pour qu'elle remplisse le cadre
-                        border: '2px solid #ccc', // Optionnel : ajouter une bordure
-                        marginRight: '10px'     // Espace entre l'image et le texte
+                        width: '60px',        
+                        height: '60px',        
+                        borderRadius: '50%',   
+                        objectFit: 'cover',    
+                        border: '2px solid #ccc', 
+                        marginRight: '10px'    
                     }}
-                /> {/* Image de l'utilisateur */}
+                /> 
                 <div>
-                    <p className="recipe-username" style={{ margin: '0', fontWeight: 'bold' }}>{recipe.username}</p> {/* Nom de l'utilisateur */}
-                    <p className="recipe-role" style={{ margin: '0', fontStyle: 'italic' }}>{recipe.role}</p> {/* Rôle de l'utilisateur */}
+                    <p className="recipe-username" style={{ margin: '0', fontWeight: 'bold' }}>{recipe.username}</p> 
+                    <p className="recipe-role" style={{ margin: '0', fontStyle: 'italic' }}>{recipe.role}</p>
                 </div>
             </div>
-            <div style={{ marginTop: '10px' }}> {/* Espace entre les informations de l'utilisateur et le titre */}
-                <p className="recipe-title" style={{ margin: '0', fontSize: '18px', fontWeight: 'bold' }}>{recipe.title}</p> {/* Titre de la recette */}
-                <p className="recipe-desc" style={{ margin: '0', color: '#666' }}>{recipe.description}</p> {/* Description de la recette */}
+            <div style={{ marginTop: '10px' }}> 
+                <p className="recipe-title" style={{ margin: '0', fontSize: '18px', fontWeight: 'bold' }}>{recipe.title}</p> 
+                <p className="recipe-desc" style={{ margin: '0', color: '#666' }}>{recipe.description}</p> 
             </div>
         </div>
     );

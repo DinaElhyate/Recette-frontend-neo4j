@@ -1,25 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function RecetteForm() {
     const navigate = useNavigate();
-    const [recipes, setRecipes] = useState([
-        {
-            titre: "Spaghetti Bolognese",
-            description: "Recette classique de spaghetti avec une sauce bolognese.",
-            image: "img/WhatsApp Image 2024-10-22 at 15.21.44.jpeg",
-        },
-        {
-            titre: "Salade César",
-            description: "Salade avec des croûtons, du parmesan et de la sauce César.",
-            image: "img/th.jpeg",
-        },
-    ]);
-
+    const [recipes, setRecipes] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [newRecipe, setNewRecipe] = useState({ titre: "", description: "", image: "" });
     const [editingIndex, setEditingIndex] = useState(null);
+
+    const fetchUserRecipes = async (userId) => {
+        try {
+            const response = await axios.get(`http://localhost:8085/api/users/${userId}`);
+            console.log('Recettes récupérées :', response.data.recipes); 
+            setRecipes(response.data.recipes);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des recettes :', error);
+            if (error.response) {
+                console.error('Détails de la réponse d\'erreur :', error.response.data);
+                console.error('Statut de la réponse :', error.response.status);
+            } else {
+                console.error("Erreur réseau : ", error);
+            }
+        }
+    };
+
+    const getUserIdFromSessionStorage = () => {
+        const userData = sessionStorage.getItem('authenticatedUser');
+        if (userData) {
+            const user = JSON.parse(userData); 
+            return user.userId; 
+        }
+        return null; 
+    };
+
+    useEffect(() => {
+        const userId = getUserIdFromSessionStorage();
+        if (userId) {
+            console.log('ID utilisateur récupéré :', userId); 
+            fetchUserRecipes(userId);
+        } else {
+            console.error("Aucun ID utilisateur trouvé dans le sessionStorage.");
+        }
+    }, []);
 
     const saveRecipe = () => {
         if (newRecipe.titre.trim() && newRecipe.description.trim() && newRecipe.image.trim()) {
@@ -38,16 +61,12 @@ export default function RecetteForm() {
     };
 
     const deleteRecipe = async (index) => {
-        const userId = "user123"; // Identifiant statique de l'utilisateur
-        const recipeId = "8ed3e3da-f1fd-4809-838d-e74e73e55ae7"; // Identifiant statique de la recette
-    
+        const userId = getUserIdFromSessionStorage(); 
+        const recipeId = recipes[index].recipeId;
+
         try {
-            // Appel à l'API pour supprimer la recette
             const response = await axios.delete(`/api/recipes/${userId}/${recipeId}`);
-    
             console.log('Recette supprimée avec succès :', response.data);
-    
-            // Mettez à jour l'état si la suppression est réussie
             const updatedRecipes = [...recipes];
             updatedRecipes.splice(index, 1);
             setRecipes(updatedRecipes);
@@ -61,14 +80,11 @@ export default function RecetteForm() {
             }
         }
     };
-    
-    
 
     const editRecipe = (index) => {
         setEditingIndex(index);
         navigate('/edit-recipe', { state: { recipe: recipes[index] } });
     };
-    
 
     const toggleForm = () => {
         setShowForm(!showForm);
@@ -79,7 +95,7 @@ export default function RecetteForm() {
         container: {
             padding: '20px',
             fontFamily: 'Arial, sans-serif',
-            marginBottom:'300px',
+            marginBottom: '300px',
         },
         buttonRightContainer: {
             display: 'flex',

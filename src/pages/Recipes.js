@@ -3,12 +3,12 @@ import PreviousSearches from "../components/PreviousSearches";
 import RecipeCard from "../components/RecipeCard";
 
 export default function Recipes() {
-    const [recipes, setRecipes] = useState([]); // State to hold recipes
-    const [loading, setLoading] = useState(true); // State to manage loading state
-    const [error, setError] = useState(null); // State to manage errors
+    const [recipes, setRecipes] = useState([]); 
+    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null); 
 
     useEffect(() => {
-        // Function to fetch recipes from the API
+    
         const fetchRecipes = async () => {
             try {
                 const response = await fetch("http://localhost:8085/api/users/user-details");
@@ -17,30 +17,29 @@ export default function Recipes() {
                 }
                 const data = await response.json();
 
-                // Extract recipes with user details
                 const allRecipes = data.flatMap(user =>
                     user.recipes.map(recipe => ({
                         ...recipe,
                         username: user.username,
                         role: user.role,
-                        userImage: user.image || "http://example.com/default-user-image.jpg" // Valeur par défaut si l'image est null
+                        userImage: user.image || "http://example.com/default-user-image.jpg" 
                     }))
                 );
 
-                // Filtrer les recettes qui existent
-                const filteredRecipes = allRecipes.filter(recipe => recipe.title); // Filtrer les recettes sans titre
-                setRecipes(filteredRecipes); // Set the fetched recipes
+                
+                const filteredRecipes = allRecipes.filter(recipe => recipe.title); 
+                setRecipes(filteredRecipes);
             } catch (error) {
-                setError(error); // Set any errors
+                setError(error);
             } finally {
-                setLoading(false); // Set loading to false once data is fetched
+                setLoading(false); 
             }
         };
 
-        fetchRecipes(); // Call the fetch function
-    }, []); // Empty dependency array to run only once on mount
+        fetchRecipes(); 
+    }, []); 
 
-    // Handle loading and error states
+   
     if (loading) {
         return <div>Loading...</div>;
     }

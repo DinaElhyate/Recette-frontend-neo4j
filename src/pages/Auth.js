@@ -15,28 +15,19 @@ export default function Auth() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    const userData = {
-      username,
-      email,
-      password
-    };
-  
-    console.log('Données envoyées :', userData);
-  
+
+    const userData = { username, email, password };
+
     try {
       const response = isLogin
         ? await axios.post('http://localhost:8085/api/users/login', { email, password })
         : await axios.post('http://localhost:8085/api/users', userData);
-      
-      console.log('Utilisateur créé avec succès :', response.data);
-  
-      // Rediriger vers la page d'accueil après une inscription réussie
-      if (!isLogin) {
-        navigate('/home'); 
-        // Redirigez vers / après une inscription réussie
-      } else {
-        navigate('/home'); // Redirigez vers /recipes après une connexion réussie
+
+      console.log('Utilisateur connecté avec succès :', response.data);
+
+      if (isLogin) {
+        sessionStorage.setItem('authenticatedUser', JSON.stringify(response.data));
+        navigate('/RecetteForm'); 
       }
     } catch (error) {
       console.error('Erreur lors de la création de l’utilisateur :', error);
@@ -46,120 +37,8 @@ export default function Auth() {
       }
     }
   };
-  
   return (
     <div className="auth-page">
-      <div className="auth-container">
-        <div className="login-form">
-          <Link to="/" className="logo">F<span>oo</span>diesHub</Link>
-          <h2>{isLogin ? 'Se connecter' : 'Inscription'}</h2>
-          <form onSubmit={handleSubmit}>
-            {isLogin ? (
-              <>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    id="email-or-phone"
-                    placeholder=" "
-                    onFocus={() => setEmailOrPhoneFocused(true)}
-                    onBlur={() => setEmailOrPhoneFocused(false)}
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                  />
-                  <label htmlFor="email-or-phone" className={emailOrPhoneFocused ? 'focused' : ''}>
-                    Email ou téléphone
-                  </label>
-                </div>
-                <div className="input-group">
-                  <input
-                    type="password"
-                    id="password"
-                    placeholder=" "
-                    onFocus={() => setPasswordFocused(true)}
-                    onBlur={() => setPasswordFocused(false)}
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                  />
-                  <label htmlFor="password" className={passwordFocused ? 'focused' : ''}>
-                    Mot de passe
-                  </label>
-                </div>
-                <div className="forgot-password">
-                  <a href="/forgot-password">Mot de passe oublié ?</a>
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="input-group">
-                  <input
-                    type="text"
-                    id="new-username"
-                    placeholder=" "
-                    onFocus={() => setUsernameFocused(true)}
-                    onBlur={() => setUsernameFocused(false)}
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)} 
-                  />
-                  <label htmlFor="new-username" className={usernameFocused ? 'focused' : ''}>
-                    Nom d'utilisateur
-                  </label>
-                </div>
-                <div className="input-group">
-                  <input
-                    type="email"
-                    id="new-email"
-                    placeholder=" "
-                    onFocus={() => setEmailOrPhoneFocused(true)}
-                    onBlur={() => setEmailOrPhoneFocused(false)}
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                  />
-                  <label htmlFor="new-email" className={emailOrPhoneFocused ? 'focused' : ''}>
-                    Email
-                  </label>
-                </div>
-                <div className="input-group">
-                  <input
-                    type="password"
-                    id="new-password"
-                    placeholder=" "
-                    onFocus={() => setPasswordFocused(true)}
-                    onBlur={() => setPasswordFocused(false)}
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                  />
-                  <label htmlFor="new-password" className={passwordFocused ? 'focused' : ''}>
-                    Mot de passe
-                  </label>
-                </div>
-              </>
-            )}
-            <button type="submit" className="btn">
-              {isLogin ? 'Connexion' : 'S’inscrire'}
-            </button>
-          </form>
-          <div className="signup">
-            <p>
-              {isLogin ? (
-                <>
-                  Vous n'avez pas de compte ? <a href="#" onClick={() => setIsLogin(false)}>Inscrivez-vous</a>
-                </>
-              ) : (
-                <>
-                  Vous avez déjà un compte ? <a href="#" onClick={() => setIsLogin(true)}>Se connecter</a>
-                </>
-              )}
-            </p>
-          </div>
-        </div>
-        <div className="description">
-          <h3>Nous sommes plus qu'une simple entreprise</h3>
-          <p>
-          Bienvenue sur notre site de recettes ! Ici, nous partageons notre passion pour la cuisine et l'art de préparer des plats savoureux et créatifs. Que vous soyez un cuisinier débutant ou un chef expérimenté, vous trouverez des recettes faciles à suivre, accompagnées de conseils pratiques et d'astuces pour réussir chaque plat. Explorez nos catégories variées, des entrées délicieuses aux desserts irrésistibles, et laissez-vous inspirer par nos idées culinaires pour chaque occasion. Bon appétit !
-          </p>
-        </div>
-      </div>
-      
       <style jsx>{`
         .auth-page {
           display: flex;
@@ -269,6 +148,117 @@ export default function Auth() {
           background-color: #5c9de8;
         }
       `}</style>
+      
+      <div className="auth-container">
+        <div className="login-form">
+          <Link to="/" className="logo">F<span>oo</span>diesHub</Link>
+          <h2>{isLogin ? 'Se connecter' : 'Inscription'}</h2>
+          <form onSubmit={handleSubmit}>
+            {isLogin ? (
+              <>
+                <div className="input-group">
+                  <input
+                    type="text"
+                    id="email-or-phone"
+                    placeholder=" "
+                    onFocus={() => setEmailOrPhoneFocused(true)}
+                    onBlur={() => setEmailOrPhoneFocused(false)}
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                  />
+                  <label htmlFor="email-or-phone" className={emailOrPhoneFocused ? 'focused' : ''}>
+                    Email ou téléphone
+                  </label>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="password"
+                    id="password"
+                    placeholder=" "
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                  />
+                  <label htmlFor="password" className={passwordFocused ? 'focused' : ''}>
+                    Mot de passe
+                  </label>
+                </div>
+                <div className="forgot-password">
+                  <Link to="/forgot-password">Mot de passe oublié ?</Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="input-group">
+                  <input
+                    type="text"
+                    id="new-username"
+                    placeholder=" "
+                    onFocus={() => setUsernameFocused(true)}
+                    onBlur={() => setUsernameFocused(false)}
+                    value={username} 
+                    onChange={(e) => setUsername(e.target.value)} 
+                  />
+                  <label htmlFor="new-username" className={usernameFocused ? 'focused' : ''}>
+                    Nom d'utilisateur
+                  </label>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="email"
+                    id="new-email"
+                    placeholder=" "
+                    onFocus={() => setEmailOrPhoneFocused(true)}
+                    onBlur={() => setEmailOrPhoneFocused(false)}
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                  />
+                  <label htmlFor="new-email" className={emailOrPhoneFocused ? 'focused' : ''}>
+                    Email
+                  </label>
+                </div>
+                <div className="input-group">
+                  <input
+                    type="password"
+                    id="new-password"
+                    placeholder=" "
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
+                    value={password} 
+                    onChange={(e) => setPassword(e.target.value)} 
+                  />
+                  <label htmlFor="new-password" className={passwordFocused ? 'focused' : ''}>
+                    Mot de passe
+                  </label>
+                </div>
+              </>
+            )}
+            <button type="submit" className="btn">
+              {isLogin ? 'Connexion' : 'S’inscrire'}
+            </button>
+          </form>
+          <div className="signup">
+            <p>
+              {isLogin ? (
+                <>
+                  Vous n'avez pas de compte ? <a href="#" onClick={() => setIsLogin(false)}>Inscrivez-vous</a>
+                </>
+              ) : (
+                <>
+                  Vous avez déjà un compte ? <a href="#" onClick={() => setIsLogin(true)}>Se connecter</a>
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="description">
+          <h3>Nous sommes plus qu'une simple entreprise</h3>
+          <p>
+          Bienvenue sur notre site de recettes ! Ici, nous partageons notre passion pour la cuisine et l'art de préparer des plats savoureux et créatifs. Que vous soyez un cuisinier débutant ou un chef expérimenté, vous trouverez des recettes faciles à suivre, accompagnées de conseils pratiques et d'astuces pour réussir chaque plat. Explorez nos catégories variées, des entrées délicieuses aux desserts irrésistibles, et laissez-vous inspirer par nos idées culinaires pour chaque occasion. Bon appétit !
+          </p>
+        </div>
+      </div>
     </div>
   );
 }

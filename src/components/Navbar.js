@@ -1,91 +1,82 @@
-import { Link, useLocation, useNavigate } from "react-router-dom"; // Importer useNavigate
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom"; 
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { faHome, faList, faCog } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
     const [showSidebar, setShowSidebar] = useState(false);
     const location = useLocation();
-    const navigate = useNavigate(); // Définir navigate
+    const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
-    // État pour savoir si l'utilisateur est connecté
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    useEffect(() => {
+       
+        const user = sessionStorage.getItem('authenticatedUser');
+        if (user) {
+            setIsLoggedIn(true);
+        }
+    }, []);
 
-    // Fonction pour gérer la déconnexion
     const handleLogout = () => {
-        // Ici, tu devrais ajouter la logique de déconnexion (par exemple, supprimer le token d'authentification)
+        sessionStorage.removeItem('authenticatedUser'); 
         setIsLoggedIn(false);
-        navigate("/Auth"); // Rediriger vers la page de connexion après déconnexion
+        navigate("/Auth"); 
     };
 
-    // Liens de navigation
-    const links = [
-        {
-            name: "Acceuil",
-            path: "/",
-            icon: faHome,
-        },
-        {
-            name: "Recettes",
-            path: "/recipes",
-            icon: faList,
-        },
-        {
-            name: "Settings",
-            path: "/settings",
-            icon: faCog,
-        },
-        // Liens conditionnels en fonction de l'état de connexion
-        ...(isLoggedIn
-            ? [
-                  {
-                      name: "Mon Compte",
-                      path: "/account", // Change le chemin selon ta route
-                      icon: faCog,
-                  },
-                  {
-                      name: "Se déconnecter",
-                      path: "/", // Change le chemin selon ta route
-                      icon: faCog,
-                      onClick: handleLogout, // Gérer la déconnexion
-                  },
-              ]
-            : [
-                  {
-                      name: "Se connecter",
-                      path: "/Auth",
-                      icon: faCog,
-                  },
-              ]),
+    const commonLinks = [
+        { name: "Accueil", path: "/", icon: faHome },
+        { name: "Recettes", path: "/recipes", icon: faList },
+        { name: "Paramètres", path: "/settings", icon: faCog },
     ];
 
-    function closeSidebar() {
+    const loggedInLinks = [
+        { name: "Mon Compte", path: "/RecetteForm", icon: faCog },
+        { name: "Se déconnecter", path: "/", icon: faCog, onClick: handleLogout }, 
+    ];
+
+    const loggedOutLinks = [
+        { name: "Se connecter", path: "/Auth", icon: faCog },
+    ];
+
+    const closeSidebar = () => {
         setShowSidebar(false);
-    }
+    };
 
     return (
         <>
             <div className="navbar container">
                 <Link to="/" className="logo">F<span>oo</span>diesHub</Link>
                 <div className="nav-links">
-                    {links.map((link) => (
+                    {commonLinks.map((link) => (
                         <Link
                             className={location.pathname === link.path ? "active" : ""}
                             to={link.path}
                             key={link.name}
-                            onClick={link.onClick} // Ajoute ici le gestionnaire de clic pour se déconnecter
+                        >
+                            {link.name}
+                        </Link>
+                    ))}
+                    {(isLoggedIn ? loggedInLinks : loggedOutLinks).map((link) => (
+                        <Link
+                            className={location.pathname === link.path ? "active" : ""}
+                            to={link.path}
+                            key={link.name}
+                            onClick={link.onClick} 
                         >
                             {link.name}
                         </Link>
                     ))}
                 </div>
-                <div onClick={() => setShowSidebar(true)} className={showSidebar ? "sidebar-btn active" : "sidebar-btn"}>
+                <div 
+                    onClick={() => setShowSidebar(true)} 
+                    className={showSidebar ? "sidebar-btn active" : "sidebar-btn"}
+                >
                     <div className="bar"></div>
                     <div className="bar"></div>
                     <div className="bar"></div>
                 </div>
             </div>
-            {showSidebar && <Sidebar close={closeSidebar} links={links} />}
+            {showSidebar && <Sidebar close={closeSidebar} links={[...commonLinks, ...(isLoggedIn ? loggedInLinks : loggedOutLinks)]} />}
         </>
     );
 }

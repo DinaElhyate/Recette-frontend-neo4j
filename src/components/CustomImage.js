@@ -1,7 +1,13 @@
-export default function CustomImage({imgSrc, pt}){
+export default function CustomImage({ imgSrc, style }) {
     return (
-        <div className="custom-image" style={{paddingTop: pt}}>
-            <img src={imgSrc} alt="" />
-        </div>
-    )
+        <img 
+            src={imgSrc} 
+            alt="Recipe" 
+            style={style} 
+            onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = `${process.env.PUBLIC_URL}/img/th.jpeg`; 
+            }} 
+        />
+    );
 }
