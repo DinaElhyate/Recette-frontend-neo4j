@@ -1,61 +1,50 @@
 import HeroSection from "../components/HeroSection";
 import ImproveSkills from "../components/ImproveSkills";
-import QouteSection from "../components/QuoteSection";
+import QuoteSection from "../components/QuoteSection";
 import ChiefsSection from "../components/ChiefsSection";
-import Recipes from "./Recipes";
-import RecipeCard from "../components/RecipeCard";
-import NewsletterSection from "../components/NewsletterSection";
 
-const recipes = [
-    
-    {
-        title: "Spaghetti and Meatballs",
-        image: "/img/gallery/img_4.jpg",
-        authorImg: "/img/top-chiefs/img_2.jpg",
-    },
-    {
-        title: "American Cheese Burger",
-        image: "/img/gallery/img_5.jpg",
-        authorImg: "/img/top-chiefs/img_3.jpg",
-    },
-    {
-        title: "Mutton Biriyani",
-        image: "/img/gallery/img_6.jpg",
-        authorImg: "/img/top-chiefs/img_5.jpg",
-    },
-    {
-        title: "Japanese Sushi",
-        image: "/img/gallery/img_10.jpg",
-        authorImg: "/img/top-chiefs/img_6.jpg",
-    },
-    {
-        title: "American Cheese Burger",
-        image: "/img/gallery/img_5.jpg",
-        authorImg: "/img/top-chiefs/img_3.jpg",
-    },
-    {
-        title: "Mutton Biriyani",
-        image: "/img/gallery/img_6.jpg",
-        authorImg: "/img/top-chiefs/img_5.jpg",
-    }
-].sort(() => Math.random() - 0.5)
-
-
-export default function Home(){
-    return (
+export default function Home() {
+       return (
         <div>
             <HeroSection />
             <ImproveSkills />
-            <QouteSection />
+            <QuoteSection />
             <ChiefsSection />
-            <h1>Recettes</h1>
-            <div className="recipes-container">
-                {/* <RecipeCard /> */}
-                {recipes.map((recipe, index) => (
-                    <RecipeCard key={index} recipe={recipe} />
-                ))}
-            </div>
-            <NewsletterSection /> 
+
+            <style jsx>{`
+    .recipes-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Taille minimum de la carte */
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-top: 1.5rem;
+        color: #333;
+    }
+
+    /* Style des cartes */
+    .recipe-card {
+        width: 100%; /* La carte occupe toute la largeur de sa colonne */
+        max-width: 180px; /* Limiter la taille maximale de la carte */
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        text-align: center;
+        background-color: #fff;
+    }
+
+    .recipe-card img {
+        width: 100%;
+        height: 120px; /* Hauteur fixe pour une taille plus petite */
+        object-fit: cover;
+        border-bottom: 1px solid #ddd;
+    }
+`}</style>
+
         </div>
-    )
+    );
 }

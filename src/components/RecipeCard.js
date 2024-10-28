@@ -1,54 +1,107 @@
-import CustomImage from "./CustomImage";
-import { useNavigate } from 'react-router-dom';
+import React from "react";
 
 export default function RecipeCard({ recipe }) {
-    const navigate = useNavigate();
-
-    const goToDetailPage = () => {
-        navigate('/RecetteDetail', { state: { recipe } }); 
-    };
-
-    const recipeImagePath = `${process.env.PUBLIC_URL}/img/${recipe.image}`; 
-    const userImagePath = `${process.env.PUBLIC_URL}/img/${recipe.userImage || 'default-user-image.jpg'}`; 
-
-    console.log('Image URL:', recipeImagePath);
-
     return (
-        <div className="recipe-card" onClick={goToDetailPage}>
-            <div className="recipe-image-container" style={{ overflow: 'hidden', borderRadius: '10px' }}>
-                <CustomImage
-                    imgSrc={recipeImagePath}
-                    pt="65%"
-                    style={{
-                        maxWidth: '100%',  
-                        maxHeight: '200px', 
-                        objectFit: 'cover', 
-                    }}
+        <div className="recipe-card">
+            <div className="image-container">
+                <img
+                    src={recipe.image || "/default-recipe.jpg"} 
+                    alt={recipe.title}
+                    className="recipe-image"
                 />
             </div>
-            <div className="recipe-card-info" style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="recipe-details">
+                <h3 className="recipe-title">{recipe.title}</h3>
+                <p className="recipe-description">{recipe.description}</p>
+            </div>
+            <div className="user-info">
                 <img
-                    className="author-img"
-                    src={userImagePath}
-                    alt={recipe.username}
-                    style={{
-                        width: '60px',        
-                        height: '60px',        
-                        borderRadius: '50%',   
-                        objectFit: 'cover',    
-                        border: '2px solid #ccc', 
-                        marginRight: '10px'    
-                    }}
-                /> 
-                <div>
-                    <p className="recipe-username" style={{ margin: '0', fontWeight: 'bold' }}>{recipe.username}</p> 
-                    <p className="recipe-role" style={{ margin: '0', fontStyle: 'italic' }}>{recipe.role}</p>
-                </div>
+                    src={recipe.user.image || "/default-user.jpg"} 
+                    alt={recipe.user.username}
+                    className="user-image"
+                />
+                <span className="username">{recipe.user.username}</span>
             </div>
-            <div style={{ marginTop: '10px' }}> 
-                <p className="recipe-title" style={{ margin: '0', fontSize: '18px', fontWeight: 'bold' }}>{recipe.title}</p> 
-                <p className="recipe-desc" style={{ margin: '0', color: '#666' }}>{recipe.description}</p> 
-            </div>
+            <style jsx>{`
+                .recipe-card {
+                    position: relative;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                    transition: transform 0.2s ease; /* Effet de survol */
+                }
+
+                .recipe-card:hover {
+                    transform: scale(1.05); /* Zoom léger au survol */
+                }
+
+                .image-container {
+                    width: 100%;
+                    height: 200px;
+                    overflow: hidden;
+                }
+
+                .recipe-image {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .recipe-details {
+                    padding: 1rem;
+                    flex-grow: 1;
+                }
+
+                .recipe-title {
+                    font-size: 1.25rem;
+                    margin: 0 0 0.5rem;
+                    font-weight: bold;
+                    word-wrap: break-word;
+                }
+
+                .recipe-description {
+                    font-size: 1rem;
+                    color: #555;
+                    word-wrap: break-word;
+                }
+
+                .user-info {
+                    position: absolute;
+                    bottom: 8px;
+                    left: 8px;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    background: rgba(255, 255, 255, 0.8);
+                    padding: 4px 8px;
+                    border-radius: 8px;
+                }
+
+                .user-image {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    object-fit: cover;
+                }
+
+                .username {
+                    font-size: 0.875rem;
+                    color: #333;
+                }
+
+                /* Adaptation pour les petits écrans */
+                @media (max-width: 600px) {
+                    .recipe-card {
+                        font-size: 0.9rem;
+                    }
+
+                    .image-container {
+                        height: 150px;
+                    }
+                }
+            `}</style>
         </div>
     );
 }
