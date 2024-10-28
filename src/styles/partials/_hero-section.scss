@@ -2,12 +2,16 @@
     .typography{
         padding-right: 1em;
     }
+
     .gallery{
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 1.75vw;
-        .custom-image{
-            
+        .custom-image {
+            width: 100%;
+            height: auto;
+            max-width: 100px; /* Taille maximale */
+            max-height: 100px; /* Taille maximale */
             border-radius: 3px;
             overflow: hidden;
             transform: scale(0);
@@ -38,6 +42,7 @@
                 animation-delay: .8s;
             }
         }
+        
         
         
     }

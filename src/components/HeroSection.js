@@ -6,13 +6,7 @@ export default function HeroSection(){
     const images = [
         "/img/gallery/img_1.jpg",
         "/img/gallery/img_2.jpg",
-        "/img/gallery/img_3.jpg",
-        "/img/gallery/img_4.jpg",
-        "/img/gallery/img_5.jpg",
-        "/img/gallery/img_6.jpg",
-        "/img/gallery/img_7.jpg",
-        "/img/gallery/img_8.jpg",
-        "/img/gallery/img_9.jpg"
+        "/img/gallery/img_3.jpg"
     ]
     const handleExploreClick = () => {
         navigate('/recipes'); 
@@ -25,10 +19,13 @@ export default function HeroSection(){
                 <button className="btn" onClick={handleExploreClick}>explorer maintenant</button>
             </div>
             <div className="col gallery">
-                { images.map((src, index) => (
-                    <CustomImage key={index} imgSrc={src} lassName="custom-image" />
-                )) }
-            </div>
+            {images.map((src, index) => (
+                <div className="image-container" key={index}>
+                    <CustomImage imgSrc={src} className="custom-image" />
+                </div>
+            ))}
+        </div>
+
         </div>
     )
 }
