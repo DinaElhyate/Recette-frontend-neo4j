@@ -1,26 +1,35 @@
 import React from "react";
 
 export default function RecipeCard({ recipe }) {
+    if (!recipe) {
+        return <div>Loading...</div>; 
+    }
+
+    const { image, title, description, user } = recipe;
+
+    const userImage = user?.image || 'default-user-image.jpg';
+    const userName = user?.username || 'Unknown'; 
+
     return (
         <div className="recipe-card">
             <div className="image-container">
                 <img
-                    src={recipe.image || "/default-recipe.jpg"} 
-                    alt={recipe.title}
+                    src={image || 'default-recipe-image.jpg'}
+                    alt={title}
                     className="recipe-image"
                 />
             </div>
             <div className="recipe-details">
-                <h3 className="recipe-title">{recipe.title}</h3>
-                <p className="recipe-description">{recipe.description}</p>
+                <h3 className="recipe-title">{title}</h3>
+                <p className="recipe-description">{description}</p>
             </div>
             <div className="user-info">
                 <img
-                    src={recipe.user.image || "/default-user.jpg"} 
-                    alt={recipe.user.username}
+                    src={userImage} 
+                    alt={userName}
                     className="user-image"
                 />
-                <span className="username">{recipe.user.username}</span>
+                <span className="username">{userName}</span>
             </div>
             <style jsx>{`
                 .recipe-card {
@@ -30,11 +39,11 @@ export default function RecipeCard({ recipe }) {
                     overflow: hidden;
                     display: flex;
                     flex-direction: column;
-                    transition: transform 0.2s ease; /* Effet de survol */
+                    transition: transform 0.2s ease;
                 }
 
                 .recipe-card:hover {
-                    transform: scale(1.05); /* Zoom léger au survol */
+                    transform: scale(1.05);
                 }
 
                 .image-container {
@@ -52,7 +61,7 @@ export default function RecipeCard({ recipe }) {
                 .recipe-details {
                     padding: 1rem;
                     flex-grow: 1;
-                     margin-bottom: 1rem; 
+                    margin-bottom: 1rem;
                 }
 
                 .recipe-title {
@@ -61,8 +70,6 @@ export default function RecipeCard({ recipe }) {
                     font-weight: bold;
                     word-wrap: break-word;
                 }
-
-                
 
                 .user-info {
                     position: absolute;
@@ -74,7 +81,6 @@ export default function RecipeCard({ recipe }) {
                     background: rgba(255, 255, 255, 0.8);
                     padding: 4px 8px;
                     border-radius: 8px;
-            
                 }
 
                 .user-image {
@@ -89,7 +95,6 @@ export default function RecipeCard({ recipe }) {
                     color: #333;
                 }
 
-                /* Adaptation pour les petits écrans */
                 @media (max-width: 600px) {
                     .recipe-card {
                         font-size: 0.9rem;

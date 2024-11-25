@@ -25,8 +25,8 @@ function App() {
       <Navbar />
       <div className="container main">
         <Routes>
-          <Route path="/" element={<Navigate to="/home" />} /> {/* Redirection vers /auth */}
-          <Route path="/auth" element={<Auth />} /> {/* Auth route */}
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/auth" element={<Auth />} /> 
           <Route path="/home" element={<Home />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/RecipeList" element={<RecipeList />} />

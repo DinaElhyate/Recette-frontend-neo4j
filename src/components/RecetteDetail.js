@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import RecipeCard from "../components/RecipeCard";
+import { useParams } from "react-router-dom";
 
 export default function RecetteDetail() {
+    const { recipeId } = useParams();
     const [recipeData, setRecipeData] = useState({
         titre: "Spaghetti Carbonara ",
         description: "Ceci est une description de test.",
