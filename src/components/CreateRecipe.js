@@ -10,8 +10,10 @@ export default function CreateRecipe() {
     // Récupérer l'userId depuis le sessionStorage
     const getUserFromSession = () => {
         const userData = sessionStorage.getItem('authenticatedUser');
-        return userData ? JSON.parse(userData).userId : null;
+        const parsedUserData = userData ? JSON.parse(userData) : null;
+        return parsedUserData && parsedUserData.user ? parsedUserData.user.userId : null;
     };
+    
 
     const [newRecipe, setNewRecipe] = useState({
         title: "",
@@ -26,31 +28,38 @@ export default function CreateRecipe() {
         e.preventDefault();
         setIsLoading(true);
         setError(null);
-
+    
+        // Vérification si l'utilisateur est connecté
+        const userId = getUserFromSession();
+        if (!userId) {
+            setError("Utilisateur non connecté");
+            setIsLoading(false);
+            return;
+        }
+    
         // Validation des données requises
         if (!newRecipe.title.trim() || newRecipe.ingredients.some(ing => !ing.trim())) {
             setError("Le titre et tous les ingrédients sont requis");
             setIsLoading(false);
             return;
         }
-
-        // Nettoyage des données avant envoi
+    
+        // Transformation des données avant envoi
         const recipeData = {
             title: newRecipe.title,
             description: newRecipe.description,
             image: newRecipe.image,
-            ingredients: newRecipe.ingredients.filter(ing => ing.trim()),
-            instructions: newRecipe.instructions.filter(inst => inst.trim())
+            // Convertir les ingrédients en objets avec la propriété 'name'
+            ingredients: newRecipe.ingredients.filter(ing => ing.trim()).map(ing => ({ name: ing.trim() })),
+            // Convertir les instructions en objets avec la propriété 'step'
+            instructions: newRecipe.instructions.filter(inst => inst.trim()).map(inst => ({ step: inst.trim() }))
         };
-
+    
+        console.log("Données envoyées : ", recipeData);  // Ajoutez une console pour vérifier le format des données
+    
         try {
-            const userId = getUserFromSession();
-            if (!userId) {
-                throw new Error("Utilisateur non connecté");
-            }
-
             const response = await axios.post(
-                `http://localhost:8085/api/recipes/${userId}`,
+                `http://localhost:3000/api/recipes/${userId}`,
                 recipeData,
                 {
                     headers: {
@@ -58,7 +67,7 @@ export default function CreateRecipe() {
                     }
                 }
             );
-
+    
             if (response.status === 201) {
                 alert('Recette créée avec succès!');
                 navigate('/RecetteForm'); // Redirection vers la liste des recettes
@@ -74,6 +83,8 @@ export default function CreateRecipe() {
             setIsLoading(false);
         }
     };
+    
+    
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];

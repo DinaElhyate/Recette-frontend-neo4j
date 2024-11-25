@@ -20,7 +20,7 @@ export default function Auth() {
 
     try {
       const response = isLogin
-        ? await axios.post('http://localhost:8085/api/users/login', { email, password })
+        ? await axios.post('http://localhost:3000/api/login', { email, password })
         : await axios.post('http://localhost:8085/api/users', userData);
 
       console.log('Utilisateur connecté avec succès :', response.data);

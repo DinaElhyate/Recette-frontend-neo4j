@@ -52,6 +52,7 @@ export default function RecipeCard({ recipe }) {
                 .recipe-details {
                     padding: 1rem;
                     flex-grow: 1;
+                     margin-bottom: 1rem; 
                 }
 
                 .recipe-title {
@@ -61,11 +62,7 @@ export default function RecipeCard({ recipe }) {
                     word-wrap: break-word;
                 }
 
-                .recipe-description {
-                    font-size: 1rem;
-                    color: #555;
-                    word-wrap: break-word;
-                }
+                
 
                 .user-info {
                     position: absolute;
@@ -73,10 +70,11 @@ export default function RecipeCard({ recipe }) {
                     left: 8px;
                     display: flex;
                     align-items: center;
-                    gap: 0.5rem;
+                    gap: 1rem;
                     background: rgba(255, 255, 255, 0.8);
                     padding: 4px 8px;
                     border-radius: 8px;
+            
                 }
 
                 .user-image {

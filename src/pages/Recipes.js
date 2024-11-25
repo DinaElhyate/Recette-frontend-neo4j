@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PreviousSearches from "../components/PreviousSearches";
 import RecipeCard from "../components/RecipeCard";
 
@@ -7,34 +8,20 @@ export default function Recipes() {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate(); // Ajout du hook useNavigate
 
     useEffect(() => {
         const fetchRecipes = async () => {
             try {
-                const response = await fetch("http://localhost:8085/api/users/user-details");
+                const response = await fetch("http://localhost:3000/api/recipes"); // Mise à jour de l'URL de l'API
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
                 const data = await response.json();
+                console.log("Data fetched from API:", data);
 
-                const allRecipes = data.flatMap(user =>
-                    user.recipes.map(recipe => ({
-                        ...recipe,
-                        username: user.username,
-                        role: user.role,
-                        userImage: user.image || "default-image-path.png",
-                        ingredients: recipe.ingredients || [],
-                        instructions: recipe.instructions || [],
-                        cookingTime: recipe.cookingTime,
-                        difficulty: recipe.difficulty,
-                        category: recipe.category,
-                        description: recipe.description,
-                        image: recipe.image,
-                        createdAt: recipe.createdAt
-                    }))
-                );
-
-                const filteredRecipes = allRecipes.filter(recipe => recipe.title);
+                // Formatage des données récupérées depuis l'API
+                const filteredRecipes = data.filter(recipe => recipe.title);
                 setRecipes(filteredRecipes);
             } catch (error) {
                 setError(error);
@@ -46,10 +33,17 @@ export default function Recipes() {
         fetchRecipes();
     }, []);
 
-    
     const filteredRecipes = recipes.filter(recipe =>
         recipe.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const handleRecipeClick = (recipeId) => {
+        if (recipeId) {
+            navigate(`/RecetteDetail/${recipeId}`);
+        } else {
+            console.error("Recipe ID is undefined");
+        }
+    };
 
     if (loading) {
         return (
@@ -65,21 +59,20 @@ export default function Recipes() {
 
     return (
         <div>
-            
             <PreviousSearches setSearchQuery={setSearchQuery} />
             <div className="recipes-container">
                 {filteredRecipes.sort(() => Math.random() - 0.5).map((recipe, index) => (
-                    <RecipeCard
-                        key={index}
-                        recipe={{
-                            ...recipe,
-                            user: {
-                                username: recipe.username,
-                                image: recipe.userImage,
-                                role: recipe.role
-                            }
-                        }}
-                    />
+                    <div key={index} onClick={() => handleRecipeClick(recipe.recipeId)}>
+                        <RecipeCard
+                            recipe={{
+                                ...recipe,
+                                user: {
+                                    userId: recipe.userId, // Ajout de l'ID utilisateur, s'il est présent
+                                    image: recipe.userImage || "default-image-path.png" // Ajouter une image par défaut si elle est absente
+                                }
+                            }}
+                        />
+                    </div>
                 ))}
             </div>
             <style jsx>{`
