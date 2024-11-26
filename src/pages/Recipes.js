@@ -8,19 +8,30 @@ export default function Recipes() {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+<<<<<<< HEAD
     const navigate = useNavigate(); // Ajout du hook useNavigate
+=======
+    const navigate = useNavigate(); 
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
 
     useEffect(() => {
         const fetchRecipes = async () => {
             try {
+<<<<<<< HEAD
                 const response = await fetch("http://localhost:3000/api/recipes"); // Mise à jour de l'URL de l'API
+=======
+                const response = await fetch("http://localhost:3000/api/recipes"); 
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
                 }
                 const data = await response.json();
                 console.log("Data fetched from API:", data);
 
+<<<<<<< HEAD
                 // Formatage des données récupérées depuis l'API
+=======
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                 const filteredRecipes = data.filter(recipe => recipe.title);
                 setRecipes(filteredRecipes);
             } catch (error) {
@@ -38,6 +49,7 @@ export default function Recipes() {
     );
 
     const handleRecipeClick = (recipeId) => {
+<<<<<<< HEAD
         if (recipeId) {
             navigate(`/RecetteDetail/${recipeId}`);
         } else {
@@ -45,6 +57,12 @@ export default function Recipes() {
         }
     };
 
+=======
+        navigate(`/RecetteDetail/${recipeId}`); 
+    };
+
+    
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -61,6 +79,7 @@ export default function Recipes() {
         <div>
             <PreviousSearches setSearchQuery={setSearchQuery} />
             <div className="recipes-container">
+<<<<<<< HEAD
                 {filteredRecipes.sort(() => Math.random() - 0.5).map((recipe, index) => (
                     <div key={index} onClick={() => handleRecipeClick(recipe.recipeId)}>
                         <RecipeCard
@@ -74,6 +93,22 @@ export default function Recipes() {
                         />
                     </div>
                 ))}
+=======
+            {filteredRecipes.sort(() => Math.random() - 0.5).map((recipe, index) => (
+    <div key={index} onClick={() => handleRecipeClick(recipe.id)}>
+        <RecipeCard
+            recipe={{
+                ...recipe,
+                user: {
+                    userId: recipe.userId, 
+                    image: recipe.userImage || "default-image-path.png" 
+                }
+            }}
+        />
+    </div>
+))}
+
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
             </div>
             <style jsx>{`
                 .recipes-container {

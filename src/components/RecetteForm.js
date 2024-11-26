@@ -16,7 +16,11 @@ export default function RecetteForm() {
 
     const fetchUserData = async (userId) => {
         try {
+<<<<<<< HEAD
             const response = await axios.get(`http://localhost:8085/api/users/${userId}`);
+=======
+            const response = await axios.get(`http://localhost:3000/users/${userId}`);
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
             setUser(response.data);
             console.log("Données de l'utilisateur :", response.data);
         } catch (error) {
@@ -24,6 +28,7 @@ export default function RecetteForm() {
         }
     };
     const saveUserProfile = async () => {
+<<<<<<< HEAD
         if (user) {
             try {
                 const response = await axios.put(`http://localhost:8085/api/users/${user.userId}`, user);
@@ -35,10 +40,40 @@ export default function RecetteForm() {
             } catch (error) {
                 console.error('Erreur lors de la mise à jour du profil:', error);
             }
+=======
+        const userId = getUserIdFromSessionStorage(); 
+    
+        if (!userId || !user?.user) {
+            console.error("Données utilisateur manquantes");
+            return;
+        }
+    
+        try {
+            const response = await axios.put(`http://localhost:3000/users/${userId}`, {
+                username: user.user.username,
+                password: user.user.password || "",
+                email: user.user.email,
+            });
+    
+            if (response.status === 200) {
+                console.log("Profil utilisateur mis à jour avec succès :", response.data);
+                setUser({ user: response.data.user }); 
+                setIsEditingProfile(false); 
+            } else {
+                console.error("Échec de la mise à jour du profil :", response.data.message);
+            }
+        } catch (error) {
+            console.error("Erreur lors de la mise à jour du profil :", error);
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
         }
     };
     
     
+<<<<<<< HEAD
+=======
+    
+    
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
     const fetchUserRecipes = async (userId) => {
         try {
             const response = await axios.get(`http://localhost:8085/api/users/${userId}`);
@@ -52,7 +87,11 @@ export default function RecetteForm() {
         const userData = sessionStorage.getItem('authenticatedUser');
         if (userData) {
             const user = JSON.parse(userData); 
+<<<<<<< HEAD
             return user.userId; 
+=======
+            return user.user.userId; 
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
         }
         return null; 
     };
@@ -68,6 +107,7 @@ export default function RecetteForm() {
         }
     }, []);
 
+<<<<<<< HEAD
     const saveRecipe = () => {
         if (newRecipe.titre.trim() && newRecipe.description.trim() && newRecipe.image.trim()) {
             if (editingIndex !== null) {
@@ -83,6 +123,46 @@ export default function RecetteForm() {
             setShowForm(false);
         }
     };
+=======
+    const saveRecipe = async () => {
+        if (newRecipe.titre.trim() && newRecipe.description.trim() && newRecipe.image.trim()) {
+            const userId = getUserIdFromSessionStorage();
+    
+            if (!userId) {
+                console.error("Aucun ID utilisateur trouvé.");
+                return;
+            }
+    
+            try {
+                if (editingIndex !== null) {
+                    const response = await axios.put(
+                        `http://localhost:8085/api/recipes/${userId}/${recipes[editingIndex].recipeId}`,
+                        newRecipe
+                    );
+                    if (response.data.success) {
+                        const updatedRecipes = [...recipes];
+                        updatedRecipes[editingIndex] = response.data.updatedRecipe; 
+                        setRecipes(updatedRecipes);
+                    }
+                } else {
+                    const response = await axios.post(
+                        `http://localhost:8085/api/recipes/${userId}`,
+                        newRecipe
+                    );
+                    if (response.data.success) {
+                        setRecipes([...recipes, response.data.newRecipe]); 
+                    }
+                }
+    
+                setNewRecipe({ titre: "", description: "", image: "" });
+                setShowForm(false);
+            } catch (error) {
+                console.error("Erreur lors de l'enregistrement de la recette :", error);
+            }
+        }
+    };
+    
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
 
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [recipeToDelete, setRecipeToDelete] = useState(null);
@@ -295,7 +375,11 @@ export default function RecetteForm() {
                         <>
                             <img src={user.image} alt="User" style={styles.profileImage} />
                             <div style={styles.infoContainer}>
+<<<<<<< HEAD
                                 <h2 style={styles.profileTitle}>{user.username}</h2>
+=======
+                                <h2 style={styles.profileTitle}>{user.user.username}</h2>
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                                 <input
                                     type="file"
                                     accept="image/*"
@@ -304,34 +388,62 @@ export default function RecetteForm() {
                                         if (file) {
                                             const reader = new FileReader();
                                             reader.onloadend = () => {
+<<<<<<< HEAD
                                                 setUser({ ...user, image: reader.result }); 
                                             };
                                             reader.readAsDataURL(file); 
+=======
+                                                setNewRecipe({ ...newRecipe, image: reader.result }); // Stocker l'image sous forme Base64
+                                            };
+                                            reader.readAsDataURL(file);
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                                         }
                                     }}
                                     style={styles.input}
                                 />
+<<<<<<< HEAD
                                 <input
                                     type="text"
                                     placeholder="username"
                                     value={user.username}
                                     onChange={(e) => setUser({ ...user, username: e.target.value })}
+=======
+
+                               <input
+                                    type="text"
+                                    placeholder="username"
+                                    value={user ? user.user.username : ""}
+                                    onChange={(e) => setUser({ ...user, user: { ...user.user, username: e.target.value } })}
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                                     style={styles.input}
                                 />
                                 <input
                                     type="text"
                                     placeholder="Email"
+<<<<<<< HEAD
                                     value={user.email}
                                     onChange={(e) => setUser({ ...user, email: e.target.value })}
+=======
+                                    value={user ? user.user.email : ""}
+                                    onChange={(e) => setUser({ ...user, user: { ...user.user, email: e.target.value } })}
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                                     style={styles.input}
                                 />
                                 <input
                                     type="text"
                                     placeholder="Rôle"
+<<<<<<< HEAD
                                     value={user.role}
                                     onChange={(e) => setUser({ ...user, role: e.target.value })}
                                     style={styles.input}
                                 />
+=======
+                                    value={user ? user.user.role : ""}
+                                    onChange={(e) => setUser({ ...user, user: { ...user.user, role: e.target.value } })}
+                                    style={styles.input}
+                                />
+
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                                 <button 
                                     onClick={() => {
                                         saveUserProfile();
@@ -348,6 +460,7 @@ export default function RecetteForm() {
                         </>
                     ) : (
                         <>
+<<<<<<< HEAD
                             <img src={user.image} alt="User" style={styles.profileImage} />
                             <div style={styles.infoContainer}>
                                 <h2 style={styles.profileTitle}>{user.username}</h2>
@@ -369,6 +482,26 @@ export default function RecetteForm() {
                                 <MdEdit style={styles.editProfileIcon} onClick={() => setIsEditingProfile(true)} />
                             </div>
                         </>
+=======
+                    <img src={user.user.image || "defaultImage.jpg"} alt="User" style={styles.profileImage} />
+                    <div style={styles.infoContainer}>
+                        <h2 style={styles.profileTitle}>{user.user.username}</h2>
+                        <div style={styles.infoRow}>
+                            <span style={styles.infoLabel}>Email:</span>
+                            <div style={styles.infoBox}>
+                                <span style={styles.infoValue}>{user.user.email}</span>
+                            </div>
+                        </div>
+                        <div style={styles.infoRow}>
+                            <span style={styles.infoLabel}>Rôle:</span>
+                            <div style={styles.infoBox}>
+                                <span style={styles.infoValue}>{user.user.role}</span>
+                            </div>
+                        </div>
+                        <MdEdit style={styles.editProfileIcon} onClick={() => setIsEditingProfile(true)} />
+                    </div>
+                </>
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
                     )}
                 </div>
             </div>

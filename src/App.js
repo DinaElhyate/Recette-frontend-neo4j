@@ -25,8 +25,13 @@ function App() {
       <Navbar />
       <div className="container main">
         <Routes>
+<<<<<<< HEAD
           <Route path="/" element={<Navigate to="/home" />} /> {/* Redirection vers /auth */}
           <Route path="/auth" element={<Auth />} /> {/* Auth route */}
+=======
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/auth" element={<Auth />} /> 
+>>>>>>> 6e7d408c34378db2ad31e4c4c9ef2c358adf84d9
           <Route path="/home" element={<Home />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/RecipeList" element={<RecipeList />} />
