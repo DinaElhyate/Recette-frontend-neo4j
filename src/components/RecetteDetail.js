@@ -12,11 +12,11 @@ const RecetteDetail = ({ recipeId }) => {
   useEffect(() => {
     const fetchRecipeDetails = async () => {
       try {
-        // Fetch recipe details
+        
         const recipeResponse = await axios.get(`/api/recipes/${recipeId}`);
         setRecipe(recipeResponse.data);
 
-        // Fetch comments for this recipe
+      
         const commentsResponse = await axios.get(`/api/comments/${recipeId}`);
         setComments(commentsResponse.data.comments);
         
@@ -37,7 +37,7 @@ const RecetteDetail = ({ recipeId }) => {
     try {
       const response = await axios.post('/api/comments', {
         content: newComment,
-        userId: 'current-user-id', // Replace with actual user ID
+        userId: 'current-user-id', 
         recipeId: recipeId
       });
       

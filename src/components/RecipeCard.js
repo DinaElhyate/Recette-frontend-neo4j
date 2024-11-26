@@ -2,7 +2,7 @@ import React from 'react';
 import { User, Clock, Star, Heart } from 'lucide-react';
 
 const RecipeCard = ({ recipe }) => {
-  // Default placeholder in case no image is provided
+  
   const defaultImage = '/placeholder-recipe.jpg';
 
   return (
@@ -15,7 +15,7 @@ const RecipeCard = ({ recipe }) => {
           className="absolute inset-0 w-full h-full object-cover"
         />
         
-        {/* Overlay Actions */}
+       
         <div className="absolute top-4 right-4 flex space-x-2">
           <button className="bg-white/70 p-2 rounded-full hover:bg-white/90 transition">
             <Heart className="w-5 h-5 text-red-500" />
@@ -27,7 +27,7 @@ const RecipeCard = ({ recipe }) => {
         </div>
       </div>
 
-      {/* Recipe Content */}
+     
       <div className="p-4 space-y-3">
         <div className="flex justify-between items-start">
           <h2 className="text-xl font-bold text-gray-800 line-clamp-1">
@@ -39,7 +39,7 @@ const RecipeCard = ({ recipe }) => {
           {recipe.description}
         </p>
 
-        {/* Recipe Meta Information */}
+        
         <div className="flex items-center justify-between text-gray-500">
           <div className="flex items-center space-x-2">
             <User className="w-4 h-4" />
@@ -54,7 +54,7 @@ const RecipeCard = ({ recipe }) => {
           </div>
         </div>
 
-        {/* Additional Details */}
+        
         <div className="flex justify-between items-center pt-3 border-t">
           <div className="flex items-center space-x-2">
             <span className="text-sm font-medium text-green-600">
